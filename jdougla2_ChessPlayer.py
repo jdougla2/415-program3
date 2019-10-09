@@ -31,32 +31,44 @@ class jdougla2_ChessPlayer(ChessPlayer):
         y = 0
         for x in moves:
             boardy = deepcopy(self.board)
-            orig = boardy.all_occupied_positions(opponentColor)
+            #orig = boardy.all_occupied_positions(opponentColor)
+            orig = self.get_opp_pieces(boardy)
             boardy.make_move(x[0], x[1])
             #print(len(self.get_pieces(boardy, opponentColor)))
-            new = boardy.all_occupied_positions(opponentColor)
+            #new = boardy.all_occupied_positions(opponentColor)
+            new = self.get_opp_pieces(boardy)
             if new < orig or boardy.is_king_in_check(opponentColor):
                 bestMove = y
                 break
                 #print('here')
             y = y + 1    
 
-        #print(boardy.items())
         if bestMove == -1:
             return random.choice(self.board.get_all_available_legal_moves(self.color))
         
         #print()
         return self.board.get_all_available_legal_moves(self.color)[bestMove]
     
-    def get_pieces(self, boardy, color):
-        boardyMoves = boardy.get_all_available_legal_moves(color)
-        pieces = []
-        for x in boardyMoves:
-            pieces.append(x[0])
+    def get_opp_pieces(self, boardy):
+        opponentColor = ''
+        if self.color == 'black':
+            opponentColor = 'white'
+        else:
+            opponentColor = 'black'
+            
+        allPieces = []
+        oppPieces = []
         
-        res = []
-        for i in pieces:
-            if i not in res:
-                res.append(i)
-                
-        return res
+        for x in boardy.items():
+            allPieces.append(x[1].get_notation())
+            
+        if opponentColor == 'white':
+            for x in allPieces:
+                if x.isupper() == True:
+                    oppPieces.append(x)
+        else:
+            for x in allPieces:
+                if x.islower() == True:
+                    oppPieces.append(x)
+        
+        return len(oppPieces)
