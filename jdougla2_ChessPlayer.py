@@ -19,12 +19,34 @@ class jdougla2_ChessPlayer(ChessPlayer):
             self.opponentColor = 'Black'
             
     def get_move(self, your_remaining_time, opp_remaining_time, prog_stuff):
+        opponentColor = ''
+        if self.color == 'black':
+            opponentColor = 'white'
+        else:
+            opponentColor = 'black'
         boardy = deepcopy(self.board)
-        myPieces = self.get_pieces(boardy, self.color)
-        theirPieces = self.get_pieces(boardy, self.opponnentColor)
+        moves = boardy.get_all_available_legal_moves(self.color)
+        #print(len(moves))
+        bestMove = -1
+        y = 0
+        for x in moves:
+            boardy = deepcopy(self.board)
+            orig = boardy.all_occupied_positions(opponentColor)
+            boardy.make_move(x[0], x[1])
+            #print(len(self.get_pieces(boardy, opponentColor)))
+            new = boardy.all_occupied_positions(opponentColor)
+            if new < orig:
+                bestMove = y
+                break
+                #print('here')
+            y = y + 1    
+
+        print(boardy.items())
+        if bestMove == -1:
+            return random.choice(self.board.get_all_available_legal_moves(self.color))
         
-        print(myPieces)
-        return random.choice(self.board.get_all_available_legal_moves(self.color))
+        #print()
+        return self.board.get_all_available_legal_moves(self.color)[bestMove]
     
     def get_pieces(self, boardy, color):
         boardyMoves = boardy.get_all_available_legal_moves(color)
@@ -33,6 +55,8 @@ class jdougla2_ChessPlayer(ChessPlayer):
             pieces.append(x[0])
         
         res = []
-        for i in myPieces:
+        for i in pieces:
             if i not in res:
                 res.append(i)
+                
+        return res
