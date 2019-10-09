@@ -35,13 +35,13 @@ class jdougla2_ChessPlayer(ChessPlayer):
             boardy.make_move(x[0], x[1])
             #print(len(self.get_pieces(boardy, opponentColor)))
             new = boardy.all_occupied_positions(opponentColor)
-            if new < orig:
+            if new < orig or boardy.is_king_in_check(opponentColor):
                 bestMove = y
                 break
                 #print('here')
             y = y + 1    
 
-        print(boardy.items())
+        #print(boardy.items())
         if bestMove == -1:
             return random.choice(self.board.get_all_available_legal_moves(self.color))
         
