@@ -26,32 +26,26 @@ class jdougla2_ChessPlayer(ChessPlayer):
             opponentColor = 'black'
         boardy = deepcopy(self.board)
         moves = boardy.get_all_available_legal_moves(self.color)
-        #print(len(moves))
         bestMove = -1
         y = 0
         for x in moves:
             boardy = deepcopy(self.board)
-            #orig = boardy.all_occupied_positions(opponentColor)
-            orig = self.get_opp_pieces(boardy)
+            orig = self.get_opp_pieces(boardy, self.color)
             boardy.make_move(x[0], x[1])
-            #print(len(self.get_pieces(boardy, opponentColor)))
-            #new = boardy.all_occupied_positions(opponentColor)
-            new = self.get_opp_pieces(boardy)
+            new = self.get_opp_pieces(boardy, self.color)
             if new < orig or boardy.is_king_in_check(opponentColor):
                 bestMove = y
                 break
-                #print('here')
             y = y + 1    
 
         if bestMove == -1:
             return random.choice(self.board.get_all_available_legal_moves(self.color))
         
-        #print()
         return self.board.get_all_available_legal_moves(self.color)[bestMove]
     
-    def get_opp_pieces(self, boardy):
+    def get_opp_pieces(self, boardy, color):
         opponentColor = ''
-        if self.color == 'black':
+        if color == 'black':
             opponentColor = 'white'
         else:
             opponentColor = 'black'
@@ -72,3 +66,34 @@ class jdougla2_ChessPlayer(ChessPlayer):
                     oppPieces.append(x)
         
         return len(oppPieces)
+    
+    def get_opp_piece_value(self, boardy, color): #Wasn't able to get working in time
+        opponentColor = ''
+        if color == 'black':
+            opponentColor = 'white'
+        else:
+            opponentColor = 'black'
+            
+        allPieces = list(boardy.items())
+        oppPieces = []
+        for x in range(len(allPieces)):
+            allPieces[x] = [allPieces[x][0], allPieces[x][1].get_notation()]
+        
+        if opponentColor == 'white':
+            for x in allPieces:
+                if x[1].isupper() == True:
+                    oppPieces.append(x)
+        else:
+            for x in allPieces:
+                if x[1].islower() == True:
+                    oppPieces.append(x)
+                    
+        for x in range(len(oppPieces)):
+            if oppPieces[x][1].lower() == 'p':
+                oppPieces[x] = [oppPieces[x][0], 1]
+            elif oppPieces[x][1].lower() == 'p':
+                oppPieces[x] = [oppPieces[x][0], 3]
+            else:
+                oppPieces[x] = [oppPieces[x][0], 2]
+        
+        return oppPieces
